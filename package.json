@@ -1,0 +1,30 @@
+{
+	"name": "roblox-test",
+	"version": "0.0.1",
+	"scripts": {
+		"build": "rbxtsc",
+		"watch": "rbxtsc -w"
+	},
+	"devDependencies": {
+		"@rbxts/compiler-types": "^3.0.0-types.0",
+		"@rbxts/types": "^1.0.808",
+		"@typescript-eslint/eslint-plugin": "^8.6.0",
+		"@typescript-eslint/parser": "^8.6.0",
+		"eslint": "^8.57.0",
+		"eslint-config-prettier": "^9.1.0",
+		"eslint-plugin-prettier": "^5.2.1",
+		"eslint-plugin-roblox-ts": "^0.0.36",
+		"eslint-plugin-simple-import-sort": "^12.1.1",
+		"prettier": "^3.3.3",
+		"rbxts-transformer-flamework": "^1.2.3",
+		"roblox-ts": "^3.0.0",
+		"typescript": "5.5.3"
+	},
+	"dependencies": {
+		"@flamework/components": "^1.2.3",
+		"@flamework/core": "^1.2.3",
+		"@flamework/networking": "^1.2.3",
+		"@rbxts/services": "^1.5.5",
+		"@rbxts/signal": "^1.1.1"
+	}
+}
