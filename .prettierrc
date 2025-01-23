@@ -1,6 +1,7 @@
 {
-    "printWidth": 120,
-    "tabWidth": 4,
-    "trailingComma": "all",
-    "useTabs": true
+	"printWidth": 120,
+	"tabWidth": 4,
+	"trailingComma": "all",
+	"useTabs": true,
+	"endOfLine": "lf"
 }

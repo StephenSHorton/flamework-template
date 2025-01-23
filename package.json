@@ -3,19 +3,21 @@
 	"version": "0.0.1",
 	"scripts": {
 		"build": "rbxtsc",
-		"watch": "rbxtsc -w"
+		"watch": "rbxtsc -w",
+		"format": "prettier --write .",
+		"lint": "eslint ."
 	},
 	"devDependencies": {
 		"@rbxts/compiler-types": "^3.0.0-types.0",
-		"@rbxts/types": "^1.0.808",
-		"@typescript-eslint/eslint-plugin": "^8.6.0",
-		"@typescript-eslint/parser": "^8.6.0",
+		"@rbxts/types": "^1.0.813",
+		"@typescript-eslint/eslint-plugin": "^8.21.0",
+		"@typescript-eslint/parser": "^8.21.0",
 		"eslint": "^8.57.0",
-		"eslint-config-prettier": "^9.1.0",
-		"eslint-plugin-prettier": "^5.2.1",
+		"eslint-config-prettier": "^10.0.1",
+		"eslint-plugin-prettier": "^5.2.3",
 		"eslint-plugin-roblox-ts": "^0.0.36",
 		"eslint-plugin-simple-import-sort": "^12.1.1",
-		"prettier": "^3.3.3",
+		"prettier": "^3.4.2",
 		"rbxts-transformer-flamework": "^1.2.3",
 		"roblox-ts": "^3.0.0",
 		"typescript": "5.5.3"
