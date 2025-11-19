@@ -1,12 +1,18 @@
 import { Networking } from "@flamework/networking";
 
-interface ClientToServerEvents {}
+type ClientToServerEvents = {};
 
-interface ServerToClientEvents {}
+type ServerToClientEvents = {};
 
-interface ClientToServerFunctions {}
+type ClientToServerFunctions = {};
 
-interface ServerToClientFunctions {}
+type ServerToClientFunctions = {};
 
-export const GlobalEvents = Networking.createEvent<ClientToServerEvents, ServerToClientEvents>();
-export const GlobalFunctions = Networking.createFunction<ClientToServerFunctions, ServerToClientFunctions>();
+export const GlobalEvents = Networking.createEvent<
+	ClientToServerEvents,
+	ServerToClientEvents
+>();
+export const GlobalFunctions = Networking.createFunction<
+	ClientToServerFunctions,
+	ServerToClientFunctions
+>();
