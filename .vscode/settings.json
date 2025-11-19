@@ -1,15 +1,3 @@
 {
-	"typescript.tsdk": "node_modules/typescript/lib",
-	"files.eol": "\n",
-	"[typescript]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode",
-		"editor.formatOnSave": true
-	},
-	"[typescriptreact]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode",
-		"editor.formatOnSave": true
-	},
-	"eslint.run": "onType",
-	"eslint.format.enable": true,
-	"terminal.integrated.defaultProfile.windows": "Git Bash"
+	"editor.defaultFormatter": "biomejs.biome"
 }
