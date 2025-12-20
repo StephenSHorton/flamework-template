@@ -4,7 +4,7 @@
 		"allowSyntheticDefaultImports": true,
 		"downlevelIteration": true,
 		"jsx": "react",
-		"jsxFactory": "Roact.createElement",
+		"jsxFactory": "Roact.jsx",
 		"jsxFragmentFactory": "Roact.createFragment",
 		"module": "commonjs",
 		"moduleResolution": "Node",

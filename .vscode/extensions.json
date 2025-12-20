@@ -3,6 +3,7 @@
 		"roblox-ts.vscode-roblox-ts",
 		"dbaeumer.vscode-eslint",
 		"biomejs.biome",
-		"oven.bun-vscode"
+		"oven.bun-vscode",
+		"evaera.vscode-rojo"
 	]
 }

@@ -1,5 +1,5 @@
 {
-	"name": "roblox-components",
+	"name": "flamework-template",
 	"globIgnorePaths": ["**/package.json", "**/tsconfig.json"],
 	"tree": {
 		"$className": "DataModel",
