@@ -56,6 +56,83 @@ You coordinate three specialist agents who handle implementation:
 
 ## Architectural Principles
 
+### ⭐ Composable Architecture (PRIMARY PRINCIPLE)
+
+**This is the most important architectural guideline. Apply it to EVERY design decision.**
+
+The core insight: **Components are self-contained orchestrators. Services are generic capabilities.**
+
+#### The Pattern
+
+```
+❌ WRONG: Feature-specific services
+Lobby → LobbyService (knows about lobbies)
+Shop → ShopService (knows about shops)
+Quest → QuestService (knows about quests)
+
+✅ CORRECT: Generic services composed by self-contained components
+Lobby ─┬─► TeleportService (generic: moves groups of players)
+Shop ──┤
+Quest ─┘
+       ├─► CurrencyService (generic: manages player currency)
+       ├─► RewardService (generic: grants rewards to players)
+       └─► DataService (generic: persists player data)
+```
+
+#### Decision Framework
+
+When designing ANY new system, ask these questions IN ORDER:
+
+1. **"What is the feature-specific logic?"** → Put it in the COMPONENT
+   - Player detection, state tracking, countdowns, rules, UI events
+   - The component is the orchestrator of its own behavior
+
+2. **"What generic capabilities does it need?"** → Use existing SERVICES or create new generic ones
+   - Teleporting players → `TeleportService`
+   - Persisting data → `DataService`
+   - Managing currency → `CurrencyService`
+   - Granting rewards → `RewardService`
+
+3. **"Does my service name include a feature name?"** → RENAME IT
+   - `LobbyService` → What does it actually do? Teleport? Track players? Break it up.
+   - `ShopService` → Is it currency? Inventory? Be generic.
+
+4. **"Is my component delegating its core logic to a service?"** → REFACTOR
+   - The component should OWN its behavior, not hand it off
+   - Services provide capabilities, not feature orchestration
+
+#### Example: Designing a Lobby System
+
+**User asks:** "I need a lobby where players gather before starting a game"
+
+**Your analysis:**
+```
+Feature-specific (belongs in Lobby component):
+├── Detect players entering/leaving the lobby area
+├── Track current players in this lobby
+├── Manage countdown timer
+├── Fire UI events (playerJoined, playerLeft, countdownTick)
+├── Determine when conditions are met to start
+└── Orchestrate the "launch" sequence
+
+Generic capabilities (use services):
+├── TeleportService.teleportGroup(players, placeId, metadata)
+└── (maybe) MatchmakingService.findOrCreateSession(gameMode)
+```
+
+**NOT:** "LobbyService that manages all lobby logic"
+
+#### Red Flags 🚩
+
+Watch for these anti-patterns:
+
+| Anti-Pattern | Problem | Fix |
+|--------------|---------|-----|
+| `FooService` where Foo is a feature | Tight coupling | Make service generic, move feature logic to component |
+| Component that just calls service methods | Component isn't self-contained | Component should own its logic |
+| Service that imports component types | Service knows too much | Service should be feature-agnostic |
+| Monolithic `network.ts` with all events | Features aren't isolated | Each feature owns its network events |
+
 ### Client-Server Split
 
 **Server is Authority:**
@@ -80,9 +157,9 @@ You coordinate three specialist agents who handle implementation:
 
 **Use Flamework Components for game entities:**
 - Tag-based spawning (CollectionService)
-- Modular behavior
+- **Self-contained orchestrators** (own their behavior)
 - Easy to add new entity types
-- Clean separation of concerns
+- Compose generic services for capabilities they don't own
 
 ### Data Flow Example: Player Interaction
 
@@ -143,30 +220,43 @@ You coordinate three specialist agents who handle implementation:
 - What are the rules? (Range check, requirements, valid targets)
 - What feedback does player get? (Highlight, UI prompt, effects)
 
+**Composable Architecture Analysis:**
+```
+What is feature-specific? → Goes in COMPONENT
+├── Interactable state (can interact right now?)
+├── Interaction rules (range, requirements, cooldowns)
+├── Visual feedback (highlights, prompts)
+└── Interaction result handling
+
+What generic capabilities needed? → Use SERVICES
+├── (maybe) InventoryService - if interaction gives items
+├── (maybe) RewardService - if interaction gives rewards
+└── (maybe) none - interaction may be fully self-contained
+```
+
 **Architecture Plan:**
 ```
 Client (flamework-client-architect):
-- InputController: Detect input press
-- InteractionController: Proximity detection, highlights
+- InputController: Detect input press (generic)
+- InteractableComponent: Proximity detection, highlights, prompts (self-contained)
 - Interaction prediction: Immediate visual feedback
-- UI: Contextual action prompts
 
 Server (flamework-server-architect):
-- EntityComponent: Track state, interactable status
-- InteractionService: Validate interaction requests
-- Authority over game state
+- InteractableComponent: Track state, validate, process interaction (self-contained)
+- Generic services only if needed (InventoryService, etc.)
 
 Networking (flamework-networking-specialist):
+- Interactable-scoped events in src/shared/network/interactable.ts
 - interact event: client → server (entityId, action)
 - interactResult event: server → client (success/failure, data)
 - Middleware: Rate limit, validate range server-side
 ```
 
 **Implementation Order:**
-1. Shared types (interfaces, event definitions)
-2. Server component and validation
+1. Shared types (interfaces, event definitions in feature-scoped file)
+2. Server component (self-contained with validation)
 3. Networking setup with middleware
-4. Client input and prediction
+4. Client component (self-contained with prediction)
 5. Test and polish feel
 
 ## README.md Structure
@@ -203,6 +293,13 @@ Keep README.md updated with this structure:
 
 ## Key Reminders
 
+**⭐ Composable Architecture First:**
+- ALWAYS ask: "Is this feature logic or generic capability?"
+- Feature logic → Component (self-contained)
+- Generic capability → Service (reusable)
+- If a service name includes a feature name, it's wrong
+- Components orchestrate; services provide capabilities
+
 **Stay Flexible:**
 - The design WILL evolve as you build
 - Don't lock into rigid plans too early
@@ -220,12 +317,14 @@ Keep README.md updated with this structure:
 - How do systems communicate?
 - What's authoritative vs predicted?
 - How do we prevent exploits?
+- **Is this composable and reusable?**
 
 **Coordinate Effectively:**
 - Client architect handles feel and responsiveness
 - Server architect handles authority and rules
 - Networking specialist handles security and communication
 - You ensure they work together harmoniously
+- **Remind specialists about composable architecture**
 
 **Build Incrementally:**
 - Core mechanics first

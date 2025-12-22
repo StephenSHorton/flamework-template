@@ -39,6 +39,61 @@ Reference these skills when you need detailed information about specific Flamewo
 
 ## Core Principles
 
+### 0. ⭐ Composable Architecture (PRIMARY)
+
+**Services are GENERIC capabilities. Components are SELF-CONTAINED orchestrators.**
+
+This is the most important principle. Before writing any code, ask:
+
+| Question | Answer |
+|----------|--------|
+| Does my service name include a feature name? | ❌ Rename to be generic |
+| Is this logic specific to one feature? | → Put it in the COMPONENT |
+| Could multiple features use this capability? | → Make it a generic SERVICE |
+
+**✅ Good service names (generic capabilities):**
+- `TeleportService` - teleports groups of players anywhere
+- `DataService` - persists and retrieves player data
+- `CurrencyService` - manages player currency
+- `RewardService` - grants rewards to players
+- `MatchmakingService` - finds or creates game sessions
+
+**❌ Bad service names (feature-specific):**
+- `LobbyService` - what does a "lobby" have to do with a service?
+- `ShopService` - shop logic belongs in a Shop component
+- `QuestService` - quest logic belongs in a Quest component
+
+**Components own their feature logic:**
+```typescript
+// ✅ CORRECT: Component is self-contained
+@Component({ tag: "Lobby" })
+export class LobbyComponent extends BaseComponent<Attrs, Model> {
+    constructor(
+        private teleportService: TeleportService,  // generic capability
+    ) { super(); }
+
+    private players: Player[] = [];
+    private countdown = 0;
+
+    // Lobby OWNS all lobby logic:
+    // - player detection
+    // - countdown management
+    // - UI events
+    // - deciding when to launch
+
+    private onCountdownComplete() {
+        // Only reaches out to generic service for capability it doesn't own
+        this.teleportService.teleportGroup(this.players, this.attributes.DestinationPlaceId);
+    }
+}
+
+// ❌ WRONG: Feature-specific service
+@Service()
+export class LobbyService {
+    // This shouldn't exist - lobby logic belongs in the component
+}
+```
+
 ### 1. Always Use Constructor Dependency Injection
 
 **✅ Correct:**
@@ -285,10 +340,13 @@ export class PlayerService implements OnStart {
 
 Before completing any server feature:
 
+- [ ] **⭐ Composable architecture followed** (services generic, components self-contained)
+- [ ] Service names are generic (no feature names like "LobbyService")
+- [ ] Feature logic lives in components, not services
 - [ ] All client input is validated
 - [ ] Services use constructor DI
 - [ ] OnStart used instead of OnInit
-- [ ] Networking split into server/client files
+- [ ] Networking split into server/client files (and scoped per feature)
 - [ ] Middleware applied for common checks (auth, rate limit)
 - [ ] DataStore operations wrapped in pcall
 - [ ] No sensitive data sent to client
@@ -319,11 +377,14 @@ Before completing any server feature:
 
 ## Remember
 
+- **⭐ Composable architecture** - Services are generic, components are self-contained
 - **Security first** - Never trust client input
 - **Skills available** - Reference Flamework and roblox-ts skills for detailed info
 - **Constructor DI** - Preferred over Dependency macro
 - **OnStart** - Preferred over OnInit
 - **Validate everything** - Type guards, bounds checking, permissions
 - **Test thoroughly** - In Studio before deploying
+
+**Before creating a service, ask:** "Could this be used by features other than the one I'm building?" If not, the logic probably belongs in a component.
 
 You are building the authoritative game server. Your code determines what's real in the game world.

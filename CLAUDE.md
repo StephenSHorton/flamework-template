@@ -45,10 +45,81 @@ src/
 
 ### Flamework Pattern
 
-- **Services** (`@Service`) - Server-side singletons for game logic
+- **Services** (`@Service`) - Server-side singletons for **generic, reusable capabilities**
 - **Controllers** (`@Controller`) - Client-side singletons for input/UI
-- **Components** (`@Component`) - Tag-based behavior attached to instances
-- **Networking** - Type-safe RemoteEvents/Functions defined in `src/shared/network.ts`
+- **Components** (`@Component`) - Tag-based behavior attached to instances, **self-contained orchestrators**
+- **Networking** - Type-safe RemoteEvents/Functions, **scoped per feature/component**
+
+## Composable Architecture (Core Principle)
+
+This project follows a **composable architecture** pattern. This is the guiding principle for all system design.
+
+### The Pattern
+
+**Components are self-contained orchestrators:**
+- A component owns ALL logic for its feature (state management, rules, events, etc.)
+- Components reach out to generic services only for capabilities they don't own
+- Components should NOT delegate feature logic to feature-specific services
+
+**Services are generic, reusable capabilities:**
+- Services should be domain-agnostic (e.g., `TeleportService`, not `LobbyService`)
+- A service shouldn't know about specific features that use it
+- Services provide "verbs" that any system can use
+
+### Example
+
+**❌ Wrong (tightly coupled):**
+```
+LobbyComponent → LobbyService (lobby-specific)
+ShopComponent → ShopService (shop-specific)
+QuestComponent → QuestService (quest-specific)
+```
+
+**✅ Correct (composable):**
+```
+LobbyComponent (self-contained)
+├── Player tracking, countdown, rules
+└── When ready → TeleportService.teleportGroup(players, destination)
+
+ShopComponent (self-contained)
+├── UI state, item display, purchase validation
+└── When purchasing → CurrencyService.deduct(player, amount)
+
+QuestComponent (self-contained)
+├── Progress tracking, completion checks
+└── When complete → RewardService.grant(player, rewards)
+```
+
+### Benefits
+
+1. **Components are drop-in** - Add the component, it works
+2. **Services are reusable** - `TeleportService` works for lobbies, parties, dungeons, etc.
+3. **Easier to test** - Mock generic services, test component logic in isolation
+4. **Clearer ownership** - "Lobby does lobby things, teleport service teleports"
+
+### Networking Scope
+
+Each feature/component owns its networking:
+```typescript
+// src/shared/network/lobby.ts - Lobby-specific events
+export const LobbyEvents = Networking.createEvent<
+  { leave: () => void },
+  { playerJoined: (), playerLeft: (), countdown: (seconds: number) => void }
+>();
+```
+
+NOT a monolithic `network.ts` with all events mixed together.
+
+### Decision Guide
+
+When designing a new system, ask:
+
+| Question | If Yes → |
+|----------|----------|
+| Is this logic specific to one feature? | Put it in the component |
+| Could multiple features use this? | Make it a generic service |
+| Does the service name include a feature name? | Rename to be generic |
+| Does the component delegate its core logic? | Refactor to be self-contained |
 
 ### Runtime Initialization
 

@@ -40,6 +40,67 @@ Reference these skills when you need detailed information about specific Flamewo
 
 ## Core Principles
 
+### 0. ⭐ Composable Architecture (PRIMARY)
+
+**Controllers are GENERIC capabilities. Components are SELF-CONTAINED orchestrators.**
+
+This mirrors the server-side principle. Before writing any code, ask:
+
+| Question | Answer |
+|----------|--------|
+| Does my controller name include a feature name? | ❌ Rename to be generic |
+| Is this logic specific to one feature? | → Put it in the COMPONENT |
+| Could multiple features use this capability? | → Make it a generic CONTROLLER |
+
+**✅ Good controller names (generic capabilities):**
+- `InputController` - handles raw input, provides keybindings
+- `CameraController` - manages camera behavior
+- `UIController` - manages UI mounting and state
+- `SoundController` - plays sounds and music
+
+**❌ Bad controller names (feature-specific):**
+- `LobbyUIController` - lobby UI logic belongs in a LobbyUI component
+- `InventoryInputController` - inventory input belongs in Inventory component
+- `ShopController` - shop logic belongs in a Shop component
+
+**Components own their feature logic:**
+```typescript
+// ✅ CORRECT: Component is self-contained
+@Component({ tag: "LobbyUI" })
+export class LobbyUIComponent extends BaseComponent<Attrs, ScreenGui> {
+    constructor(
+        private soundController: SoundController,  // generic capability
+    ) { super(); }
+
+    // LobbyUI OWNS all lobby UI logic:
+    // - listening to lobby events
+    // - rendering player count
+    // - showing countdown
+    // - leave button behavior
+
+    private onPlayerJoined() {
+        this.soundController.play("Join");  // generic capability
+        this.updatePlayerList();  // own logic
+    }
+}
+
+// ❌ WRONG: Feature-specific controller
+@Controller()
+export class LobbyUIController {
+    // This shouldn't exist - lobby UI logic belongs in the component
+}
+```
+
+**Feature-scoped networking:**
+```typescript
+// Each feature owns its own network events
+// src/shared/network/lobby.ts
+export const LobbyEvents = Networking.createEvent<...>();
+
+// In component:
+private events = LobbyEvents.client;
+```
+
 ### 1. Always Use Constructor Dependency Injection
 
 **✅ Correct:**
@@ -447,6 +508,10 @@ export class PowerUpComponent
 
 Before completing any client feature:
 
+- [ ] **⭐ Composable architecture followed** (controllers generic, components self-contained)
+- [ ] Controller names are generic (no feature names like "ShopController")
+- [ ] Feature logic lives in components, not controllers
+- [ ] Networking scoped per feature (not monolithic network.ts)
 - [ ] Controllers use constructor DI
 - [ ] OnStart used for initialization
 - [ ] OnRender used for visual updates
@@ -492,6 +557,7 @@ Before completing any client feature:
 
 ## Remember
 
+- **⭐ Composable architecture** - Controllers are generic, components are self-contained
 - **Responsive feel** - Client prediction is key
 - **Skills available** - Reference Flamework and roblox-ts skills for detailed info
 - **Constructor DI** - Preferred over Dependency macro
@@ -499,5 +565,7 @@ Before completing any client feature:
 - **Roact for UI** - Component-based, reactive
 - **Performance matters** - Maintain 60 FPS
 - **Visual feedback** - Every action should feel satisfying
+
+**Before creating a controller, ask:** "Could this be used by features other than the one I'm building?" If not, the logic probably belongs in a component.
 
 You are building the player experience. Your code determines how the game feels to play.
