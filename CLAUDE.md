@@ -135,3 +135,76 @@ Network events and functions are defined in `src/shared/network.ts` using `Netwo
 - Uses **ESLint** with roblox-ts plugin for linting
 - Unused variables should be prefixed with `_`
 - JSX uses Roact syntax (`Roact.createElement`)
+
+## Cleanup with Maid
+
+Use `@rbxts/maid` for managing connection cleanup. Never manually track `RBXScriptConnection` objects.
+
+### Pattern for Components/Services
+
+```typescript
+import Maid from "@rbxts/maid";
+
+@Component({ tag: "Example" })
+export class ExampleComponent extends BaseComponent<Attrs, Model> {
+    private readonly maid = new Maid();
+
+    onStart() {
+        // Add connections to maid
+        this.maid.GiveTask(
+            someEvent.Connect(() => { ... })
+        );
+    }
+
+    destroy() {
+        this.maid.DoCleaning();
+        super.destroy();
+    }
+}
+```
+
+### Per-Entity Cleanup (e.g., per-player)
+
+When tracking connections for dynamic entities (players, NPCs, etc.), use a Map of Maids:
+
+```typescript
+private readonly maid = new Maid();              // Component lifetime
+private readonly playerMaids = new Map<Player, Maid>();  // Per-player
+
+private onPlayerJoin(player: Player) {
+    const playerMaid = new Maid();
+    this.playerMaids.set(player, playerMaid);
+
+    playerMaid.GiveTask(
+        player.CharacterRemoving.Connect(() => { ... })
+    );
+}
+
+private onPlayerLeave(player: Player) {
+    const playerMaid = this.playerMaids.get(player);
+    if (playerMaid) {
+        playerMaid.DoCleaning();
+        this.playerMaids.delete(player);
+    }
+}
+
+destroy() {
+    for (const [_, playerMaid] of this.playerMaids) {
+        playerMaid.DoCleaning();
+    }
+    this.maid.DoCleaning();
+    super.destroy();
+}
+```
+
+### In Roact Components
+
+```typescript
+useEffect(() => {
+    const maid = new Maid();
+
+    maid.GiveTask(Events.something.connect(() => { ... }));
+
+    return () => maid.DoCleaning();
+}, []);
+```
