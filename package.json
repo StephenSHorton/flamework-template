@@ -2,7 +2,9 @@
 	"name": "flamework-templater",
 	"type": "module",
 	"scripts": {
+		"prebuild": "bun scripts/generate-build-hash.ts",
 		"build": "rbxtsc",
+		"prewatch": "bun scripts/generate-build-hash.ts",
 		"watch": "rbxtsc -w",
 		"format": "prettier --write .",
 		"lint": "eslint . --fix; biome check --write"

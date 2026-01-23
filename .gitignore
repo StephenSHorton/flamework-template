@@ -4,3 +4,4 @@
 *.tsbuildinfo
 flamework.build
 aftman.toml
+src/shared/constants/build.ts
