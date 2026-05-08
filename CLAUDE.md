@@ -66,6 +66,15 @@ This project follows a **composable architecture** pattern. This is the guiding 
 - A service shouldn't know about specific features that use it
 - Services provide "verbs" that any system can use
 
+### Two-Tier Module Design
+
+| Layer | Location | Purpose |
+|-------|----------|---------|
+| **Core** | `src/shared/core/` | Game-agnostic reusable modules (Health, Inventory, Damageable, ResourceProducer, etc.) |
+| **Game** | `src/shared/game/` | Project-specific modules that compose Core modules |
+
+Core modules should never reference Game modules. Game modules compose and extend Core modules for project-specific behavior.
+
 ### Example
 
 **❌ Wrong (tightly coupled):**
@@ -96,6 +105,22 @@ QuestComponent (self-contained)
 2. **Services are reusable** - `TeleportService` works for lobbies, parties, dungeons, etc.
 3. **Easier to test** - Mock generic services, test component logic in isolation
 4. **Clearer ownership** - "Lobby does lobby things, teleport service teleports"
+
+### Event-Based Communication
+
+Components communicate through events/signals, not direct method calls on each other:
+
+**1. Direct Callbacks (local, same context)**
+Use callback functions or signal instances when modules share a context or have a natural parent-child relationship.
+
+**2. Global Event Bus (cross-system, decoupled)**
+Use for communication across unrelated systems (e.g., "player died" → UI death screen, scoring system, respawn timer all react independently).
+
+**Rule of thumb:** If you'd need to hunt for a reference just to talk to something, use the event bus instead.
+
+### No Direct State Mutation
+
+Modules expose public methods or raise signals. No module should reach into another module and set its fields directly. This keeps ownership clear and makes networked state easier to reason about.
 
 ### Networking Scope
 
@@ -135,6 +160,8 @@ Network events and functions are defined in `src/shared/network.ts` using `Netwo
 - Uses **ESLint** with roblox-ts plugin for linting
 - Unused variables should be prefixed with `_`
 - JSX uses Roact syntax (`Roact.createElement`)
+- **One module per file.** File name matches the primary export.
+- **Keep modules small.** If a module is doing two distinct things, split it.
 
 ## Cleanup with Maid
 
