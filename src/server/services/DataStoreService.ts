@@ -129,12 +129,16 @@ export class DataStoreService implements OnStart {
 		}
 
 		const doc = this.docs.get(id);
-		if (doc) {
-			// Explicit final write — belt-and-suspenders alongside the Charm
-			// effect. If Charm ever defers effect runs (end-of-frame batching),
-			// the last atom mutation may not have triggered doc.write() yet.
-			doc.write(DataManager.getData(id));
-		}
+
+		// The reactive effect registered in loadPlayer fires synchronously on
+		// every DataManager mutation (verified against Charm 0.10's notify in
+		// node_modules/@rbxts/charm/src/store.luau), so the session-time
+		// updateData above already wrote the latest state to the Lapis buffer.
+		// No explicit doc.write needed.
+		//
+		// If you ever wrap mutations in Charm.batch(...) upstream, restore an
+		// explicit doc.write here — batched notifications only fire when the
+		// batch block closes.
 
 		this.subs.get(id)?.();
 		this.subs.delete(id);
