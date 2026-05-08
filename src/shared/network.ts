@@ -1,12 +1,19 @@
 import { Networking } from "@flamework/networking";
+import type { DataReplicationPayload } from "./data/replication";
 
-type ClientToServerEvents = {};
+export interface ClientToServerEvents {}
 
-type ServerToClientEvents = {};
+export interface ServerToClientEvents {
+	core: {
+		dataDelta: (payload: DataReplicationPayload) => void;
+	};
+}
 
-type ClientToServerFunctions = {};
+export interface ClientToServerFunctions {
+	requestHydration: () => void;
+}
 
-type ServerToClientFunctions = {};
+export interface ServerToClientFunctions {}
 
 export const GlobalEvents = Networking.createEvent<
 	ClientToServerEvents,
