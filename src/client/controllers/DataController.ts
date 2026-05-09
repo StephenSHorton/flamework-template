@@ -1,6 +1,11 @@
 import { Controller, type OnStart } from "@flamework/core";
 import Squash from "@rbxts/squash";
-import { DataFlags, DataManager, DataReplica, parseDataUserId } from "shared/data";
+import {
+	DataFlags,
+	DataManager,
+	DataReplica,
+	parseDataUserId,
+} from "shared/data";
 import { Events, Functions } from "../network";
 
 const serdesCount = Squash.vlq();
@@ -32,6 +37,7 @@ export class DataController implements OnStart {
 			}
 		});
 
-		if (!ok) warn(`[DataController] failed to deserialize delta: ${tostring(err)}`);
+		if (!ok)
+			warn(`[DataController] failed to deserialize delta: ${tostring(err)}`);
 	}
 }

@@ -1,13 +1,13 @@
-import { Service, type OnStart } from "@flamework/core";
+import { type OnStart, Service } from "@flamework/core";
 import Object from "@rbxts/object-utils";
 import { Players } from "@rbxts/services";
 import Squash from "@rbxts/squash";
 import { Clock } from "shared/core";
 import {
-	type DataReplicationDelta,
+	buildDataKey,
 	DataManager,
 	DataReplica,
-	buildDataKey,
+	type DataReplicationDelta,
 	dataAtom,
 	parseDataUserId,
 } from "shared/data";
@@ -26,11 +26,15 @@ export class DataReplicationService implements OnStart {
 	public constructor(private readonly playerStateService: PlayerStateService) {}
 
 	public onStart(): void {
-		this.playerStateService.onPlayerLoaded((player) => this.sendInitialSnapshot(player));
+		this.playerStateService.onPlayerLoaded((player) =>
+			this.sendInitialSnapshot(player),
+		);
 		this.playerStateService.onPlayerRemoving((player) =>
 			this.hydratedPlayers.delete(player.UserId),
 		);
-		Functions.requestHydration.setCallback((player) => this.sendInitialSnapshot(player));
+		Functions.requestHydration.setCallback((player) =>
+			this.sendInitialSnapshot(player),
+		);
 		this.clock.on(() => this.tick());
 	}
 
@@ -56,7 +60,11 @@ export class DataReplicationService implements OnStart {
 			if (data === undefined) continue;
 
 			const userId = parseDataUserId(recordKey);
-			if (userId === undefined || !this.playerStateService.isPlayerLoaded(userId)) continue;
+			if (
+				userId === undefined ||
+				!this.playerStateService.isPlayerLoaded(userId)
+			)
+				continue;
 
 			let replica = this.replicas.get(recordKey);
 			if (!replica) {
@@ -68,7 +76,7 @@ export class DataReplicationService implements OnStart {
 			if (delta !== undefined) this.pushDelta(grouped, userId, delta);
 		}
 
-		const stale = new Array<string>();
+		const stale: string[] = [];
 		this.replicas.forEach((_, key) => {
 			if (!seen.has(key)) stale.push(key);
 		});
@@ -78,7 +86,8 @@ export class DataReplicationService implements OnStart {
 			if (!replica) continue;
 			this.replicas.delete(key);
 			const userId = parseDataUserId(key);
-			if (userId !== undefined) this.pushDelta(grouped, userId, replica.cleanup());
+			if (userId !== undefined)
+				this.pushDelta(grouped, userId, replica.cleanup());
 		}
 
 		return grouped;
@@ -124,7 +133,7 @@ export class DataReplicationService implements OnStart {
 	): void {
 		let list = grouped.get(userId);
 		if (!list) {
-			list = new Array<DataReplicationDelta>();
+			list = [] as DataReplicationDelta[];
 			grouped.set(userId, list);
 		}
 		list.push(delta);

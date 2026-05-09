@@ -22,7 +22,8 @@ export class DataReplica {
 
 	public update(data: Data): DataReplicationDelta | undefined {
 		const serialized = this.stringify(data);
-		if (this.initialized && serialized === this.lastSerialized) return undefined;
+		if (this.initialized && serialized === this.lastSerialized)
+			return undefined;
 		this.lastSerialized = serialized;
 
 		const flags = (
@@ -55,7 +56,10 @@ export class DataReplica {
 	public static serialize(cursor: Cursor, delta: DataReplicationDelta): void {
 		// Write order: payload, flags, key. Squash cursor is LIFO so the
 		// deserialize side pops in reverse: key, flags, payload.
-		serdesPayload.ser(cursor, delta.data ? HttpService.JSONEncode(delta.data) : undefined);
+		serdesPayload.ser(
+			cursor,
+			delta.data ? HttpService.JSONEncode(delta.data) : undefined,
+		);
 		serdesFlags.ser(cursor, delta.flags);
 		serdesKey.ser(cursor, delta.key);
 	}
@@ -68,7 +72,10 @@ export class DataReplica {
 		return {
 			key,
 			flags,
-			data: payload !== undefined ? (HttpService.JSONDecode(payload) as Data) : undefined,
+			data:
+				payload !== undefined
+					? (HttpService.JSONDecode(payload) as Data)
+					: undefined,
 		};
 	}
 

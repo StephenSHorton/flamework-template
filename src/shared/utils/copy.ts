@@ -18,7 +18,10 @@ export function deepClone<T>(value: T, seen?: Map<AnyTable, AnyTable>): T {
 	return out as T;
 }
 
-export function deepMerge<T extends AnyTable>(target: T, source: Partial<T>): T {
+export function deepMerge<T extends AnyTable>(
+	target: T,
+	source: Partial<T>,
+): T {
 	const out: AnyTable = { ...(target as AnyTable) };
 	for (const [key, value] of pairs(source as AnyTable)) {
 		const k = key as string;

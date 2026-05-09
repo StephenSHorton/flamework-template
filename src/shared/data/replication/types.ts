@@ -6,7 +6,7 @@ export interface DataReplicationDelta {
 	readonly data?: Data;
 }
 
-export const enum DataFlags {
+export enum DataFlags {
 	None = 0,
 	Data = 1 << 0,
 	Spawn = 1 << 1,

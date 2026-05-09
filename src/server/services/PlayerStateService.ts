@@ -1,4 +1,4 @@
-import { Service, type OnStart } from "@flamework/core";
+import { type OnStart, Service } from "@flamework/core";
 import { Players } from "@rbxts/services";
 import Signal from "@rbxts/signal";
 
@@ -13,30 +13,38 @@ export class PlayerStateService implements OnStart {
 
 	public onStart(): void {
 		Players.PlayerAdded.Connect((player) => this.handlePlayerAdded(player));
-		Players.PlayerRemoving.Connect((player) => this.handlePlayerRemoving(player));
+		Players.PlayerRemoving.Connect((player) =>
+			this.handlePlayerRemoving(player),
+		);
 		for (const player of Players.GetPlayers()) this.handlePlayerAdded(player);
 	}
 
-	public onPlayerAdded(callback: (player: Player) => void): RBXScriptConnection {
+	public onPlayerAdded(
+		callback: (player: Player) => void,
+	): RBXScriptConnection {
 		this.players.forEach((player) => {
 			task.spawn(callback, player);
 		});
 		return this.playerAdded.Connect(callback);
 	}
 
-	public onPlayerLoaded(callback: (player: Player) => void): RBXScriptConnection {
+	public onPlayerLoaded(
+		callback: (player: Player) => void,
+	): RBXScriptConnection {
 		this.loadedPlayers.forEach((player) => {
 			task.spawn(callback, player);
 		});
 		return this.playerLoaded.Connect(callback);
 	}
 
-	public onPlayerRemoving(callback: (player: Player) => void): RBXScriptConnection {
+	public onPlayerRemoving(
+		callback: (player: Player) => void,
+	): RBXScriptConnection {
 		return this.playerRemoving.Connect(callback);
 	}
 
 	public getPlayers(): ReadonlyArray<Player> {
-		const players = new Array<Player>();
+		const players: Player[] = [];
 		this.players.forEach((player) => {
 			players.push(player);
 		});
@@ -44,7 +52,7 @@ export class PlayerStateService implements OnStart {
 	}
 
 	public getLoadedPlayers(): ReadonlyArray<Player> {
-		const loaded = new Array<Player>();
+		const loaded: Player[] = [];
 		this.loadedPlayers.forEach((player) => {
 			loaded.push(player);
 		});

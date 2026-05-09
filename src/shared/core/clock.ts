@@ -10,8 +10,8 @@ export class Clock {
 	private timeScale = 1;
 
 	private readonly interval: number;
-	private readonly listeners = new Array<Listener>();
-	private readonly scaleListeners = new Array<ScaleListener>();
+	private readonly listeners = [] as Listener[];
+	private readonly scaleListeners = [] as ScaleListener[];
 	private readonly connection: RBXScriptConnection;
 
 	public constructor(interval: number, initialTime?: number) {
@@ -127,13 +127,16 @@ export class Clock {
 
 		while (this.carry >= step) {
 			this.carry -= step;
-			for (const listener of this.listeners) task.spawn(listener, step, this.time);
+			for (const listener of this.listeners)
+				task.spawn(listener, step, this.time);
 		}
 	}
 }
 
 const initialTime =
-	Workspace.GetServerTimeNow !== undefined ? Workspace.GetServerTimeNow() : os.clock();
+	Workspace.GetServerTimeNow !== undefined
+		? Workspace.GetServerTimeNow()
+		: os.clock();
 
 // 20 Hz simulation clock — game logic, replication.
 export const GameClock = new Clock(1 / 20, initialTime);

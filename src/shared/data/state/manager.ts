@@ -42,7 +42,10 @@ export class DataManager {
 		);
 	}
 
-	public static updateData(id: number, mutator: (data: Data) => Data | void): void {
+	public static updateData(
+		id: number,
+		mutator: (data: Data) => Data | void,
+	): void {
 		const key = buildDataKey(id);
 		dataAtom((prev) =>
 			produce(prev, (draft): void => {
