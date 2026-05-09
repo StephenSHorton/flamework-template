@@ -45,10 +45,10 @@ export class DataStoreService implements OnStart {
 
 	public onStart(): void {
 		this.playerStateService.onPlayerAdded((player) => {
-			void this.loadPlayer(player);
+			this.loadPlayer(player);
 		});
 		this.playerStateService.onPlayerRemoving((player) => {
-			void this.unloadPlayer(player);
+			this.unloadPlayer(player);
 		});
 	}
 

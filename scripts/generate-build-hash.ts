@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from "fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 
 const hash = Math.random().toString(36).substring(2, 8).toUpperCase();
 const timestamp = new Date().toISOString();

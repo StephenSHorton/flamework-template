@@ -18,12 +18,16 @@ export class PlayerStateService implements OnStart {
 	}
 
 	public onPlayerAdded(callback: (player: Player) => void): RBXScriptConnection {
-		this.players.forEach((player) => task.spawn(callback, player));
+		this.players.forEach((player) => {
+			task.spawn(callback, player);
+		});
 		return this.playerAdded.Connect(callback);
 	}
 
 	public onPlayerLoaded(callback: (player: Player) => void): RBXScriptConnection {
-		this.loadedPlayers.forEach((player) => task.spawn(callback, player));
+		this.loadedPlayers.forEach((player) => {
+			task.spawn(callback, player);
+		});
 		return this.playerLoaded.Connect(callback);
 	}
 
@@ -33,13 +37,17 @@ export class PlayerStateService implements OnStart {
 
 	public getPlayers(): ReadonlyArray<Player> {
 		const players = new Array<Player>();
-		this.players.forEach((player) => players.push(player));
+		this.players.forEach((player) => {
+			players.push(player);
+		});
 		return players;
 	}
 
 	public getLoadedPlayers(): ReadonlyArray<Player> {
 		const loaded = new Array<Player>();
-		this.loadedPlayers.forEach((player) => loaded.push(player));
+		this.loadedPlayers.forEach((player) => {
+			loaded.push(player);
+		});
 		return loaded;
 	}
 

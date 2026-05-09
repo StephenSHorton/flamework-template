@@ -17,10 +17,13 @@
 		"rules": {
 			"recommended": true,
 			"complexity": {
-				"noBannedTypes": "off"
+				"noBannedTypes": "off",
+				"noStaticOnlyClass": "off"
 			},
 			"suspicious": {
-				"noEmptyInterface": "off"
+				"noEmptyInterface": "off",
+				"noShadowRestrictedNames": "off",
+				"noConfusingVoidType": "off"
 			},
 			"style": {
 				"useImportType": "off"

@@ -9,7 +9,7 @@ const serdesCount = Squash.vlq();
 export class DataController implements OnStart {
 	public onStart(): void {
 		Events.core.dataDelta.connect((payload) => this.onDataDelta(payload));
-		void Functions.requestHydration.invoke();
+		Functions.requestHydration.invoke();
 	}
 
 	private onDataDelta(payload: buffer): void {
