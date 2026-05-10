@@ -4,3 +4,4 @@
 *.tsbuildinfo
 flamework.build
 src/shared/constants/build.ts
+.claude/worktrees/

@@ -1,1 +1,0 @@
-Please use gh (the Github CLI) to create a pull request for this branch into main. Assign the PR to me using the @me.
