@@ -1,5 +1,5 @@
 [tools]
-rojo = "StephenSHorton/rojo-push@7.7.0-push.1"
+rojo = "StephenSHorton/rojo-push@7.7.0-push.2"
 
 [trust]
 allow-list = ["StephenSHorton"]
