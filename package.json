@@ -6,6 +6,8 @@
 		"build": "rbxtsc",
 		"prewatch": "bun scripts/generate-build-hash.ts",
 		"watch": "rbxtsc -w",
+		"serve": "rojo serve --no-watch",
+		"push": "rojo push",
 		"format": "prettier --write .",
 		"lint": "eslint . --fix; biome check --write"
 	},

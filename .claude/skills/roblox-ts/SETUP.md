@@ -532,7 +532,7 @@ Thumbs.db
 **Rojo not syncing compiled files:**
 - Check `outDir` in tsconfig.json matches Rojo paths
 - Verify Rojo is serving correct project file
-- Restart Rojo serve
+- If using rojo-push (`rojo serve --no-watch`), run `rojo push` after building. Restarts are rarely needed; the push trigger replaces watcher-driven updates.
 
 **Watch mode not detecting changes:**
 - Check file is inside `rootDir`

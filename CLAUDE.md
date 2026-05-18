@@ -154,6 +154,53 @@ Both `runtime.client.ts` and `runtime.server.ts` use `Flamework.addPaths()` to r
 
 Network events and functions are defined in `src/shared/network.ts` using `Networking.createEvent<>()` and `Networking.createFunction<>()`. Client and server import from `src/client/network.ts` and `src/server/network.ts` respectively to get typed event handlers.
 
+## Local Library Development (Windows + Rojo)
+
+When developing an `@rbxts/*` library locally alongside this project, the standard pattern is to create a directory junction from `node_modules/@rbxts/<lib>/` to the library's repo. Rojo's filesystem watcher is unreliable across junctions (and across cross-directory `$path` references generally), so this project uses the **[rojo-push](https://github.com/StephenSHorton/rojo-push)** fork, which replaces auto-watch with a manual push trigger.
+
+### Setup
+
+Rokit installs the fork automatically — `rokit.toml` pins `rojo = "StephenSHorton/rojo-push@7.7.0-push.1"`. The binary name is still `rojo`, so existing tooling (VS Code Rojo plugin, scripts that shell out to `rojo`) keeps working.
+
+### Workflow
+
+```bash
+# Terminal 1 — leave running:
+rojo serve --no-watch
+
+# After every library rebuild:
+cd ../<lib> && bun run build && cd - && rojo push
+# Or just `rojo push` if you're already in this project.
+```
+
+`rojo push` re-snapshots the project from disk, computes a diff, and sends it to the Studio plugin via the connection that's already open. No watchers, no restarts, no missed events.
+
+### Project file structure (optional but recommended)
+
+When a library lives outside `node_modules/` (e.g., a sibling repo), point `default.project.json` at the real on-disk path so the project file is explicit about where Rojo should look:
+
+```json
+"ReplicatedStorage": {
+  "rbxts_include": {
+    "$path": "include",
+    "node_modules": {
+      "$className": "Folder",
+      "@rbxts": {
+        "$path": "node_modules/@rbxts",
+        "<lib>": {
+          "$className": "Folder",
+          "out": {
+            "$path": "../<lib>/out"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+TypeScript still resolves through `node_modules/@rbxts/<lib>` for types; Rojo follows `$path` to the library's real `out/`. This is now an *organisational* choice — with rojo-push, the watcher's junction limitations no longer force you to do this.
+
 ## Code Style
 
 - Uses **Biome** for formatting (tabs, double quotes)
