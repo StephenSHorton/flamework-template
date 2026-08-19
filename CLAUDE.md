@@ -160,7 +160,7 @@ When developing an `@rbxts/*` library locally alongside this project, the standa
 
 ### Setup
 
-Rokit installs the fork automatically — `rokit.toml` pins `rojo = "StephenSHorton/rojo-push@7.7.0-push.1"`. The binary name is still `rojo`, so existing tooling (VS Code Rojo plugin, scripts that shell out to `rojo`) keeps working.
+Rokit installs the fork automatically — `rokit.toml` pins `rojo = "StephenSHorton/rojo-push@7.7.0-push.3"`. The binary name is still `rojo`, so existing tooling (VS Code Rojo plugin, scripts that shell out to `rojo`) keeps working.
 
 ### Workflow
 
@@ -203,12 +203,20 @@ TypeScript still resolves through `node_modules/@rbxts/<lib>` for types; Rojo fo
 
 ## Code Style
 
-- Uses **Biome** for formatting (tabs, double quotes)
-- Uses **ESLint** with roblox-ts plugin for linting
+- Uses **Biome** for formatting (tabs, double quotes) plus `@rbxts/biome-plugin-roblox-ts` for roblox-ts Grit rules. Plugin paths are listed in `biome.json` (Biome 2.5.9 still resolves `extends` plugin paths relative to the project, not the package). Node helper scripts under `scripts/` have the linter disabled so those Grit rules do not rewrite `child_process.spawn`.
+- Uses **ESLint** with `eslint-plugin-roblox-ts` for the type-aware rules Biome plugins cannot express. `tsconfig.json` sets `"types": ["compiler-types", "types"]` so `@rbxts/biome-plugin-roblox-ts` is not picked up as a type package.
 - Unused variables should be prefixed with `_`
 - JSX uses Roact syntax (`Roact.createElement`)
 - **One module per file.** File name matches the primary export.
 - **Keep modules small.** If a module is doing two distinct things, split it.
+
+## Charm 0.11
+
+Studio enables `flags.frozen` and `flags.strict` automatically.
+
+- Never mutate a value you just read from an atom. Update through `produce()` / `DataManager.updateData` so the setter receives a new table.
+- Do not yield inside `effect()`. `doc.write` is an in-memory Lapis buffer write and must stay sync.
+- `peek()` was renamed to `untracked()`.
 
 ## Cleanup with Maid
 

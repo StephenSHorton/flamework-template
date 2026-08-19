@@ -133,8 +133,8 @@ export class DataStoreService implements OnStart {
 		const doc = this.docs.get(id);
 
 		// The reactive effect registered in loadPlayer fires synchronously on
-		// every DataManager mutation (verified against Charm 0.10's notify in
-		// node_modules/@rbxts/charm/src/store.luau), so the session-time
+		// every DataManager mutation (Charm 0.11 still notifies inside the
+		// setter unless you wrap writes in batch()), so the session-time
 		// updateData above already wrote the latest state to the Lapis buffer.
 		// No explicit doc.write needed.
 		//

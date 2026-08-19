@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.4.9/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.5.9/schema.json",
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
@@ -8,6 +8,14 @@
 	"files": {
 		"ignoreUnknown": false
 	},
+	"overrides": [
+		{
+			"includes": ["scripts/**"],
+			"linter": {
+				"enabled": false
+			}
+		}
+	],
 	"formatter": {
 		"enabled": true,
 		"indentStyle": "tab"
@@ -15,7 +23,7 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true,
+			"preset": "recommended",
 			"complexity": {
 				"noBannedTypes": "off",
 				"noStaticOnlyClass": "off"
@@ -42,5 +50,27 @@
 				"organizeImports": "on"
 			}
 		}
-	}
+	},
+	"plugins": [
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/luaTruthiness.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/misleadingLuaTupleChecks.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/noAny.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/noArrayPairs.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/noForIn.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/noFunctionExpressionName.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/noGetSet.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/noImplicitSelf.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/noInvalidIdentifier.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/noNull.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/noObjectMath.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/noPostFixNew.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/noPrecedingSpreadElement.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/noPrivateIdentifier.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/noUnsupportedSyntax.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/noUserDefinedLuaTuple.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/noValueTypeof.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/preferGetPlayers.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/preferTaskLibrary.grit",
+		"./node_modules/@rbxts/biome-plugin-roblox-ts/rules/sizeMethod.grit"
+	]
 }
