@@ -24,6 +24,19 @@ bun run lint
 
 After building, use Rojo (`rojo serve --no-watch`, then `rojo push`) to sync changes to Roblox Studio.
 
+## Checks (run locally - no CI)
+
+There is no CI on PRs or pushes (saves GitHub Actions minutes). Before opening or merging a PR, or pushing to main, run these locally and make sure they all pass:
+
+```bash
+bun install --frozen-lockfile
+bunx biome ci .
+bun eslint src/
+bun run build
+```
+
+`bun run lint` auto-fixes; the commands above are the non-writing checks.
+
 ## World geometry
 
 Tangible world objects are **edit-time**, not spawned from services on Play.
